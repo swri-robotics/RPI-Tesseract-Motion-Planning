@@ -34,9 +34,8 @@
 #include <tesseract_motion_planners/descartes/profile/descartes_default_plan_profile.h>
 
 static const std::string ROBOT_DESCRIPTION_PARAM = "robot_description";
-static const std::string ROBOT_SEMANTIC_PARAM = "robot_description_semantic";
 static const std::string MONITOR_NAMESPACE = "environment_monitor";
-static const std::string MONITOR_ENVIRONMENT_NAMESPACE = "robota_environment";
+static const std::string MONITOR_ENVIRONMENT_NAMESPACE = "robot_environment";
 static const std::string PLAN_PROCESS_ACTION_NAME = "plan_process";
 static const std::string SIMPLE_PLAN_PROCESS_ACTION_NAME = "simple_plan_process";
 
@@ -148,14 +147,13 @@ public:
         simple_process_plan_server_ =
             nh_.advertiseService(SIMPLE_PLAN_PROCESS_ACTION_NAME, &MotionPlanner::simplePlanProcessCallback, this);
 
-        // Load in urdf and srdf
-        std::string urdf_xml_string, srdf_xml_string;
+        // Load in urdf
+        std::string urdf_xml_string;
         nh_.getParam(ROBOT_DESCRIPTION_PARAM, urdf_xml_string);
-        nh_.getParam(ROBOT_SEMANTIC_PARAM, srdf_xml_string);
 
         // Initialize tesseract environment
         tesseract_common::ResourceLocator::Ptr locator = std::make_shared<tesseract_rosutils::ROSResourceLocator>();
-        if (!env_->init(urdf_xml_string, srdf_xml_string, locator))
+        if (!env_->init(urdf_xml_string, locator))
         {
             ROS_ERROR_STREAM("Failed to initialize tesseract environment.");
         }
@@ -165,7 +163,7 @@ public:
     {
         // Load in points.csv to a vector of Eigen::Isometry3d
         std::string support_path = ros::package::getPath("rpi_abb_irb6640_180_255_support");
-        std::string filepath = support_path + "/config/points.csv";
+        std::string filepath = support_path + "/config/Curve_dense_new_mm.csv";
         YAML::Node waypoint_config = getYaml<YAML::Node>(config_yaml, "waypoints");
         int freq = getYaml<int>(waypoint_config, "downsample_frequency");
 
