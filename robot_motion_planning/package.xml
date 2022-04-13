@@ -3,7 +3,7 @@
   <name>robot_motion_planning</name>
   <version>0.0.0</version>
   <description>The robot_motion_planning package</description>
-  <auther email="tiffany.cappellari@swri.org">tcappellari</auther>
+  <author email="tiffany.cappellari@swri.org">tcappellari</author>
   <maintainer email="tiffany.cappellari@swri.org">tcappellari</maintainer>
   <license>TODO</license>
 
