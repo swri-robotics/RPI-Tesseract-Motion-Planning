@@ -22,7 +22,8 @@ find_package(yaml-cpp REQUIRED)
 catkin_package(
   INCLUDE_DIRS
     include
-  ## LIBRARIES
+  LIBRARIES
+    planner_utils
   CATKIN_DEPENDS
     tesseract_monitoring
     tesseract_planning_server
@@ -39,13 +40,22 @@ catkin_package(
 )
 
 include_directories(
-# include
+  include
   ${catkin_INCLUDE_DIRS}
   ${YAML_CPP_INCLUDE_DIRS}
 )
 
+add_library(planner_utils src/planner_utils.cpp)
+target_link_libraries(planner_utils
+  ${catkin_LIBRARIES}
+  ${YAML_CPP_LIBRARIES}
+  tesseract::tesseract_command_language
+  tesseract::tesseract_process_managers
+)
+
 add_executable(planner_node src/planner_node.cpp)
 target_link_libraries(planner_node
+  planner_utils
   ${catkin_LIBRARIES}
   tesseract::tesseract_command_language
   tesseract::tesseract_process_managers
@@ -56,6 +66,7 @@ install(DIRECTORY include/${PROJECT_NAME}
 
 install(
   TARGETS
+    planner_utils
     planner_node
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
