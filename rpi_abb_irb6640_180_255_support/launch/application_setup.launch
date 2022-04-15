@@ -1,0 +1,26 @@
+<launch>
+    <arg name="gui" default="true"/>
+
+    <!-- robot description parameters -->
+    <param name="robot_description" command="$(find xacro)/xacro '$(find rpi_abb_irb6640_180_255_support)/urdf/workcell.xacro'" />
+
+    <!-- Tesseract Monitor Parameters -->
+    <arg name="discrete_plugin" default="BulletDiscreteBVHManager"/>
+    <arg name="continuous_plugin" default="BulletCastBVHManager"/>
+    <arg name="monitor_namespace" default="robotcloud_environment"/>
+
+    <!-- Launch Tesseract Monitor -->
+    <node pkg="tesseract_monitoring" type="tesseract_monitoring_environment_node" name="tesseract_environment_monitor">
+        <param name="robot_description" type="string" value="robot_description"/>
+        <param name="discrete_plugin" type="string" value="$(arg discrete_plugin)"/>
+        <param name="continuous_plugin" type="string" value="$(arg continuous_plugin)"/>
+        <param name="joint_state_topic" type="string" value="joint_states"/>
+        <param name="monitor_namespace" type="string" value="$(arg monitor_namespace)"/>
+        <param name="publish_environment" type="bool" value="true"/>
+    </node>
+
+    <node pkg="robot_motion_planning" type="planner_node" name="planner_node" output="screen"/>
+
+    <node name="rviz" pkg="rviz" type="rviz" if="$(arg gui)"/>
+
+</launch>
