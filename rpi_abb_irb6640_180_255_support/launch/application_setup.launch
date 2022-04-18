@@ -22,6 +22,6 @@
 
     <node pkg="robot_motion_planning" type="planner_node" name="planner_node" output="screen"/>
 
-    <node name="rviz" pkg="rviz" type="rviz" if="$(arg gui)"/>
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find rpi_abb_irb6640_180_255_support)/config/robot.rviz" required="true"/>
 
 </launch>

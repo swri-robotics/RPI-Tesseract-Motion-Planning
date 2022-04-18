@@ -1,5 +1,5 @@
 waypoints:
-  downsample_frequency: 1000
+  downsample_frequency: 500
   translation: [0.0, 0.0, 0.0]
   rotation: [0.0, 0.0, 0.0]
   fixed_orientation: true

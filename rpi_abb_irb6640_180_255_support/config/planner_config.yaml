@@ -56,4 +56,4 @@ taskflow:
     trajopt: true
     contact_check: true
     time_parameterization: true
-debug: false
+debug: true
