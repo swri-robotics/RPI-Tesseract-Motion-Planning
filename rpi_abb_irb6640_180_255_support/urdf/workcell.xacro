@@ -2,7 +2,7 @@
 <robot name="abb_irb6640_180_255" xmlns:xacro="http://ros.org/wiki/xacro">
   <xacro:include filename="$(find rpi_abb_irb6640_180_255_support)/urdf/6640.urdf.xacro" />
 
-<!--    <link name="generic_fan_blade">
+    <link name="generic_fan_blade">
       <collision>
         <origin rpy="0 0 0" xyz="1.2 0 0"/>
         <geometry>
@@ -28,19 +28,19 @@
           <mesh filename="package://rpi_abb_irb6640_180_255_support/meshes/paint_gun.stl" scale="0.001 0.001 0.001"/>
         </geometry>
       </visual>
-    </link>-->
+    </link>
 
     <xacro:abb_irb6640_180_255 prefix=""/>
 
-<!--    <joint name="world_to_fan" type="fixed">
+    <joint name="world_to_fan" type="fixed">
         <parent link="world"/>
         <child link="generic_fan_blade"/>
-        <origin xyz="2.2 0 0" rpy="0 -1.57 0"/>
+        <origin xyz="1.5 -1.1 0.5" rpy="-2.356 0 1.57"/>
     </joint>
 
     <joint name="tool0_to_gun" type="fixed">
         <parent link="tool0"/>
         <child link="paint_gun"/>
         <origin xyz="0 0 0" rpy="0 0 0"/>
-    </joint>-->
+    </joint>
 </robot>
