@@ -34,6 +34,7 @@
 #include <tesseract_motion_planners/descartes/profile/descartes_default_plan_profile.h>
 
 static const std::string ROBOT_DESCRIPTION_PARAM = "robot_description";
+static const std::string ROBOT_SEMANTIC_PARAM = "robot_description_semantic";
 static const std::string MONITOR_NAMESPACE = "environment_monitor";
 static const std::string MONITOR_ENVIRONMENT_NAMESPACE = "robot_environment";
 static const std::string PLAN_PROCESS_ACTION_NAME = "plan_process";
@@ -148,12 +149,13 @@ public:
             nh_.advertiseService(SIMPLE_PLAN_PROCESS_ACTION_NAME, &MotionPlanner::simplePlanProcessCallback, this);
 
         // Load in urdf
-        std::string urdf_xml_string;
+        std::string urdf_xml_string, srdf_xml_string;
         nh_.getParam(ROBOT_DESCRIPTION_PARAM, urdf_xml_string);
+        nh_.getParam(ROBOT_SEMANTIC_PARAM, srdf_xml_string);
 
         // Initialize tesseract environment
         tesseract_common::ResourceLocator::Ptr locator = std::make_shared<tesseract_rosutils::ROSResourceLocator>();
-        if (!env_->init(urdf_xml_string, locator))
+        if (!env_->init(urdf_xml_string, srdf_xml_string, locator))
         {
             ROS_ERROR_STREAM("Failed to initialize tesseract environment.");
         }

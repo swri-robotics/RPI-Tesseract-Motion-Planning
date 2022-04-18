@@ -1,0 +1,59 @@
+waypoints:
+  downsample_frequency: 1000
+  translation: [0.0, 0.0, 0.0]
+  rotation: [0.0, 0.0, 0.0]
+  starting_joint_state: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  ending_joint_state: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+simple_planner:
+  longest_valid_state_length: 0.5
+  longest_valid_translation: 0.1
+  longest_valid_rotation: 0.5
+  min_steps: 1
+  max_steps: 1
+descartes:
+  allow_collisions: false
+  collision_margin: 0.005
+  fixed_sampler: false
+  sampling_angle: 0.3925 #radians
+  number_threads: 6
+ompl:
+  range: 0.1
+  num_solvers: 3
+  max_solutions: 1
+  max_allowed_planning_time: 30 # seconds
+  collision_margin: 0.005
+  simplify: false
+trajopt:
+  longest_valid_segment_length: 0.5
+  longest_valid_segment_fraction: 0.1
+  collision:
+    enabled: true
+    constraint: false
+    margin: 0.005 # meters
+    margin_buffer: 0.01 # meters
+    coeff: 2
+    weighted_sum: false
+  smooth_velocities:
+    enabled: true
+    coeff: [1, 1, 1, 1, 1, 1] # [joint_1, joint_2, joint_3, joint_4, joint_5, joint_6]
+  smooth_accelerations:
+    enabled: true
+    coeff: [1, 1, 1, 1, 1, 1] # [joint_1, joint_2, joint_3, joint_4, joint_5, joint_6]
+  smooth_jerks:
+    enabled: true
+    coeff: [10, 10, 10, 10, 10, 10] # [joint_1, joint_2, joint_3, joint_4, joint_5, joint_6]
+  waypoint:
+    constraint: false
+    coeff: [5, 5, 5, 5, 5, 0] # [x, y, z, roll, pitch, yaw]
+taskflow:
+  freespace:
+    ompl: true
+    trajopt: true
+    contact_check: true
+    time_parameterization: true
+  raster:
+    descartes: true
+    trajopt: true
+    contact_check: true
+    time_parameterization: true
+debug: false

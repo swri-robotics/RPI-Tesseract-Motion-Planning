@@ -3,11 +3,12 @@
 
     <!-- robot description parameters -->
     <param name="robot_description" command="$(find xacro)/xacro '$(find rpi_abb_irb6640_180_255_support)/urdf/workcell.xacro'" />
+    <param name="robot_description_semantic" textfile="$(find rpi_abb_irb6640_180_255_support)/config/abb_irb6640_180_255.srdf" />
 
     <!-- Tesseract Monitor Parameters -->
     <arg name="discrete_plugin" default="BulletDiscreteBVHManager"/>
     <arg name="continuous_plugin" default="BulletCastBVHManager"/>
-    <arg name="monitor_namespace" default="robotcloud_environment"/>
+    <arg name="monitor_namespace" default="robot_environment"/>
 
     <!-- Launch Tesseract Monitor -->
     <node pkg="tesseract_monitoring" type="tesseract_monitoring_environment_node" name="tesseract_environment_monitor">
