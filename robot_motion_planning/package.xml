@@ -8,11 +8,9 @@
   <license>TODO</license>
 
   <buildtool_depend>catkin</buildtool_depend>
-  <depend>geometry_msgs</depend>
+  <build_depend>roslaunch</build_depend>
+
   <depend>roscpp</depend>
-  <depend>rospy</depend>
-  <depend>rpi_abb_irb6640_180_255_support</depend>
-  <depend>std_msgs</depend>
   <depend>tesseract_rosutils</depend>
   <depend>tesseract_environment</depend>
   <depend>tesseract_monitoring</depend>
@@ -22,9 +20,4 @@
   <depend>tf2_ros</depend>
   <depend>std_srvs</depend>
 
-  <!-- The export tag contains other, unspecified, tags -->
-  <export>
-    <!-- Other tools can request additional information be placed here -->
-
-  </export>
 </package>
