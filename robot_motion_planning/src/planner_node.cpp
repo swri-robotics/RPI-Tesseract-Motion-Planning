@@ -1,6 +1,7 @@
 #include <ros/ros.h>
 #include <ros/node_handle.h>
 #include <std_srvs/Trigger.h>
+#include <exception>
 
 #include <robot_motion_planning/planner_utils.h>
 
@@ -34,6 +35,7 @@
 #include <tesseract_motion_planners/descartes/profile/descartes_default_plan_profile.h>
 
 static const std::string ROBOT_DESCRIPTION_PARAM = "robot_description";
+static const std::string ROBOT_SEMANTIC_PARAM = "robot_description_semantic";
 static const std::string MONITOR_NAMESPACE = "environment_monitor";
 static const std::string MONITOR_ENVIRONMENT_NAMESPACE = "robot_environment";
 static const std::string PLAN_PROCESS_ACTION_NAME = "plan_process";
@@ -73,7 +75,7 @@ tesseract_planning::CompositeInstruction createProgram(const std::vector<Eigen::
     wp_transform *= Eigen::AngleAxisd(z_rotation, Eigen::Vector3d::UnitZ());
 
     // Create manipulator given manipulator group, tf frame of the waypoints, tcp frame
-    tesseract_planning::ManipulatorInfo manip_info("manipulator", "part", "tcp");
+    tesseract_planning::ManipulatorInfo manip_info("manipulator", "world", "tool0");
 
     // Construction composite instruction (ci)
     tesseract_planning::CompositeInstruction ci("process_program", tesseract_planning::CompositeInstructionOrder::ORDERED,
@@ -148,12 +150,13 @@ public:
             nh_.advertiseService(SIMPLE_PLAN_PROCESS_ACTION_NAME, &MotionPlanner::simplePlanProcessCallback, this);
 
         // Load in urdf
-        std::string urdf_xml_string;
+        std::string urdf_xml_string, srdf_xml_string;
         nh_.getParam(ROBOT_DESCRIPTION_PARAM, urdf_xml_string);
+        nh_.getParam(ROBOT_SEMANTIC_PARAM, srdf_xml_string);
 
         // Initialize tesseract environment
         tesseract_common::ResourceLocator::Ptr locator = std::make_shared<tesseract_rosutils::ROSResourceLocator>();
-        if (!env_->init(urdf_xml_string, locator))
+        if (!env_->init(urdf_xml_string, srdf_xml_string, locator))
         {
             ROS_ERROR_STREAM("Failed to initialize tesseract environment.");
         }
@@ -163,7 +166,7 @@ public:
     {
         // Load in points.csv to a vector of Eigen::Isometry3d
         std::string support_path = ros::package::getPath("rpi_abb_irb6640_180_255_support");
-        std::string filepath = support_path + "/config/Curve_dense_new_mm.csv";
+        std::string filepath = support_path + "/config/Curve_dense_new_mm2.csv";
         YAML::Node waypoint_config = getYaml<YAML::Node>(config_yaml, "waypoints");
         int freq = getYaml<int>(waypoint_config, "downsample_frequency");
 

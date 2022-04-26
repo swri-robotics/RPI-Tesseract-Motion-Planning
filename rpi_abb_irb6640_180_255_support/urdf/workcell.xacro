@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<robot name="irb6640" xmlns:xacro="http://ros.org/wiki/xacro">
+<robot name="abb_irb6640_180_255" xmlns:xacro="http://ros.org/wiki/xacro">
   <xacro:include filename="$(find rpi_abb_irb6640_180_255_support)/urdf/6640.urdf.xacro" />
 
     <link name="generic_fan_blade">
@@ -30,12 +30,12 @@
       </visual>
     </link>
 
-    <xacro:abb_irb6640 prefix=""/>
+    <xacro:abb_irb6640_180_255 prefix=""/>
 
     <joint name="world_to_fan" type="fixed">
         <parent link="world"/>
         <child link="generic_fan_blade"/>
-        <origin xyz="2.2 0 0" rpy="0 -1.57 0"/>
+        <origin xyz="1.5 -1.1 0.5" rpy="-2.356 0 1.57"/>
     </joint>
 
     <joint name="tool0_to_gun" type="fixed">
