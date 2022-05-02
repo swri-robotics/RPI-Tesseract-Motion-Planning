@@ -4,9 +4,9 @@
 
     <link name="generic_fan_blade">
       <collision>
-        <origin rpy="0 0 0" xyz="1.2 0 0"/>
+        <origin rpy="-1 0 0" xyz="1 0 -.2"/>
         <geometry>
-          <box size="1.016 .729 .24"/>
+          <box size="1.5 .729 .15"/>
         </geometry>
       </collision>
       <visual name="visual">
@@ -18,9 +18,9 @@
 
     <link name="paint_gun">
       <collision>
-        <origin rpy="0 0 0" xyz="0 0 .7"/>
+        <origin rpy="0 0 0" xyz="0 0 .2"/>
         <geometry>
-          <box size="1.016 .729 .24"/>
+          <box size=".2 .2 .2"/>
         </geometry>
       </collision>
       <visual name="visual">
