@@ -8,7 +8,7 @@ waypoints:
   starting_joint_state: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
   ending_joint_state: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 collision:
-  enabled: true
+  enabled: false
   margin: 0.005
 taskflow:
   freespace:
