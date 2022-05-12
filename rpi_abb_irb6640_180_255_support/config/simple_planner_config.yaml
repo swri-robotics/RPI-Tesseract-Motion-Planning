@@ -1,14 +1,14 @@
 waypoints:
   downsample_frequency: 1000
-  translation: [0.0, 0.0, 0.0]
-  rotation: [0.0, 0.0, 0.0]
+  translation: [1.4, -1.2, 1.5]
+  rotation: [0.0, 3.14, 0.0]
   fixed_orientation: true
   sampling_angle: 0.3925 #radians
   smooth_transitions: true
   starting_joint_state: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
   ending_joint_state: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 collision:
-  enabled: true
+  enabled: false
   margin: 0.005
 taskflow:
   freespace:
