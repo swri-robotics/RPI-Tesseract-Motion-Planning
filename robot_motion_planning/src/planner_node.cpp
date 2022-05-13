@@ -75,7 +75,7 @@ tesseract_planning::CompositeInstruction createProgram(const std::vector<Eigen::
     wp_transform *= Eigen::AngleAxisd(z_rotation, Eigen::Vector3d::UnitZ());
 
     // Create manipulator given manipulator group, tf frame of the waypoints, tcp frame
-    tesseract_planning::ManipulatorInfo manip_info("manipulator", "world", "tool0");
+    tesseract_planning::ManipulatorInfo manip_info("manipulator", "world", "paint_gun");
 
     // Construction composite instruction (ci)
     tesseract_planning::CompositeInstruction ci("process_program", tesseract_planning::CompositeInstructionOrder::ORDERED,

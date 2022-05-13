@@ -18,12 +18,13 @@
 
     <link name="paint_gun">
       <collision>
-        <origin rpy="0 0 0" xyz="0 0 .2"/>
+        <origin rpy="0 0 0" xyz="0.03 0 -0.3"/>
         <geometry>
           <box size=".2 .2 .2"/>
         </geometry>
       </collision>
       <visual name="visual">
+        <origin rpy="0 0 0" xyz="0.03 0 -0.3"/>
         <geometry>
           <mesh filename="package://rpi_abb_irb6640_180_255_support/meshes/paint_gun.stl" scale="0.001 0.001 0.001"/>
         </geometry>
@@ -41,6 +42,6 @@
     <joint name="tool0_to_gun" type="fixed">
         <parent link="tool0"/>
         <child link="paint_gun"/>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <origin xyz="-0.03 0 0.3" rpy="0 0 0"/>
     </joint>
 </robot>
