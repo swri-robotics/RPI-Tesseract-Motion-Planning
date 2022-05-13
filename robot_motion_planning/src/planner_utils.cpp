@@ -24,9 +24,9 @@ std::vector<Eigen::Isometry3d> robot_motion_planning::loadPoints(const std::stri
             if (tokens.size() == 6)
             {
                 Eigen::Quaterniond rot;
-                rot = Eigen::AngleAxisd(std::stod(tokens[3]) / 1000, Eigen::Vector3d::UnitX())
-                      * Eigen::AngleAxisd(std::stod(tokens[4]) / 1000, Eigen::Vector3d::UnitY())
-                      * Eigen::AngleAxisd(std::stod(tokens[5]) / 1000, Eigen::Vector3d::UnitZ());
+                rot = Eigen::AngleAxisd(std::stod(tokens[3]), Eigen::Vector3d::UnitX())
+                      * Eigen::AngleAxisd(std::stod(tokens[4]), Eigen::Vector3d::UnitY())
+                      * Eigen::AngleAxisd(std::stod(tokens[5]), Eigen::Vector3d::UnitZ());
                 point = rot;
                 point.translation().x() = std::stod(tokens[0]) / 1000;
                 point.translation().y() = std::stod(tokens[1]) / 1000;
