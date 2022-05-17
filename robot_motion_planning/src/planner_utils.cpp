@@ -21,8 +21,13 @@ std::vector<Eigen::Isometry3d> robot_motion_planning::loadPoints(const std::stri
         {
             std::vector<std::string> tokens;
             boost::split(tokens, line, boost::is_any_of(separator));
-            if (tokens.size() == 3)
+            if (tokens.size() == 6)
             {
+                Eigen::Quaterniond rot;
+                rot = Eigen::AngleAxisd(std::stod(tokens[3]), Eigen::Vector3d::UnitX())
+                      * Eigen::AngleAxisd(std::stod(tokens[4]), Eigen::Vector3d::UnitY())
+                      * Eigen::AngleAxisd(std::stod(tokens[5]), Eigen::Vector3d::UnitZ());
+                point = rot;
                 point.translation().x() = std::stod(tokens[0]) / 1000;
                 point.translation().y() = std::stod(tokens[1]) / 1000;
                 point.translation().z() = std::stod(tokens[2]) / 1000;

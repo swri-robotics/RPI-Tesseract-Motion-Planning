@@ -75,7 +75,7 @@ tesseract_planning::CompositeInstruction createProgram(const std::vector<Eigen::
     wp_transform *= Eigen::AngleAxisd(z_rotation, Eigen::Vector3d::UnitZ());
 
     // Create manipulator given manipulator group, tf frame of the waypoints, tcp frame
-    tesseract_planning::ManipulatorInfo manip_info("manipulator", "world", "tool0");
+    tesseract_planning::ManipulatorInfo manip_info("manipulator", "world", "paint_gun");
 
     // Construction composite instruction (ci)
     tesseract_planning::CompositeInstruction ci("process_program", tesseract_planning::CompositeInstructionOrder::ORDERED,
@@ -166,7 +166,7 @@ public:
     {
         // Load in points.csv to a vector of Eigen::Isometry3d
         std::string support_path = ros::package::getPath("rpi_abb_irb6640_180_255_support");
-        std::string filepath = support_path + "/config/Curve_dense_new_mm2.csv";
+        std::string filepath = support_path + "/config/Curve_in_base_frame.csv";
         YAML::Node waypoint_config = getYaml<YAML::Node>(config_yaml, "waypoints");
         int freq = getYaml<int>(waypoint_config, "downsample_frequency");
 
