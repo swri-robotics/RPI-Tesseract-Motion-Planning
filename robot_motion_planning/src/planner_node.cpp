@@ -2,7 +2,10 @@
 #include <ros/node_handle.h>
 #include <std_srvs/Trigger.h>
 #include <exception>
+#include <vector>
+#include <Eigen/Geometry>
 
+#include <robot_motion_planning/PlanTrajectory.h>
 #include <robot_motion_planning/planner_utils.h>
 
 #include <tesseract_environment/environment.h>
@@ -38,8 +41,8 @@ static const std::string ROBOT_DESCRIPTION_PARAM = "robot_description";
 static const std::string ROBOT_SEMANTIC_PARAM = "robot_description_semantic";
 static const std::string MONITOR_NAMESPACE = "environment_monitor";
 static const std::string MONITOR_ENVIRONMENT_NAMESPACE = "robot_environment";
-static const std::string PLAN_PROCESS_ACTION_NAME = "plan_process";
-static const std::string SIMPLE_PLAN_PROCESS_ACTION_NAME = "simple_plan_process";
+static const std::string PLAN_PROCESS_SRV_NAME = "plan_process";
+static const std::string SIMPLE_PLAN_PROCESS_SRV_NAME = "simple_plan_process";
 
 namespace robot_motion_planning
 {
@@ -145,9 +148,9 @@ public:
         monitor_->setEnvironmentPublishingFrequency(1.0);
 
         // Start planning server service
-        process_plan_server_ = nh_.advertiseService(PLAN_PROCESS_ACTION_NAME, &MotionPlanner::planProcessCallback, this);
+        process_plan_server_ = nh_.advertiseService(PLAN_PROCESS_SRV_NAME, &MotionPlanner::planProcessCallback, this);
         simple_process_plan_server_ =
-            nh_.advertiseService(SIMPLE_PLAN_PROCESS_ACTION_NAME, &MotionPlanner::simplePlanProcessCallback, this);
+            nh_.advertiseService(SIMPLE_PLAN_PROCESS_SRV_NAME, &MotionPlanner::simplePlanProcessCallback, this);
 
         // Load in urdf
         std::string urdf_xml_string, srdf_xml_string;
@@ -249,7 +252,8 @@ public:
         return true;
     }
 
-    bool planProcessCallback(std_srvs::Trigger::Request& req, std_srvs::Trigger::Response& res)
+    bool planProcessCallback(robot_motion_planning::PlanTrajectory::Request& req,
+                             robot_motion_planning::PlanTrajectory::Response& res)
     {
         // Load planner config yaml file
         std::string support_path = ros::package::getPath("rpi_abb_irb6640_180_255_support");

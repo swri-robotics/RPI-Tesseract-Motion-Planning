@@ -11,6 +11,8 @@
   <build_depend>roslaunch</build_depend>
 
   <depend>roscpp</depend>
+  <depend>geometry_msgs</depend>
+  <depend>tesseract_msgs</depend>
   <depend>tesseract_rosutils</depend>
   <depend>tesseract_environment</depend>
   <depend>tesseract_monitoring</depend>
@@ -19,5 +21,8 @@
   <depend>tesseract_process_managers</depend>
   <depend>tf2_ros</depend>
   <depend>std_srvs</depend>
+
+  <build_depend>message_generation</build_depend>
+  <exec_depend>message_runtime</exec_depend>
 
 </package>

@@ -36,7 +36,7 @@
 namespace robot_motion_planning
 {
 /** @brief Convert vector of double to an Eigen Vector of equal length */
-Eigen::VectorXd toVectorXd(std::vector<double> values)
+inline Eigen::VectorXd toVectorXd(std::vector<double> values)
 {
     Eigen::VectorXd v(values.size());
     for (std::size_t i = 0; i < values.size(); ++i)
@@ -47,7 +47,7 @@ Eigen::VectorXd toVectorXd(std::vector<double> values)
 };
 
 /** @brief Convert an Eigen Vector to a vector of double of equal length */
-std::vector<double> fromVectorXd(Eigen::VectorXd values)
+inline std::vector<double> fromVectorXd(Eigen::VectorXd values)
 {
     std::vector<double> v;
     for (std::size_t i = 0; i < values.size(); ++i)
