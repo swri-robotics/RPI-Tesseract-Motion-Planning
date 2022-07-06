@@ -2,6 +2,7 @@
 #include <ros/node_handle.h>
 #include <std_srvs/Trigger.h>
 #include <exception>
+#include <string>
 #include <vector>
 #include <Eigen/Geometry>
 
@@ -135,6 +136,23 @@ tesseract_planning::CompositeInstruction createProgram(const std::vector<Eigen::
     return ci;
 }
 
+void outputRasterData(const tesseract_planning::CompositeInstruction& raster_plan)
+{
+  std::ofstream outfile("/tmp/movej_waypoints.csv");
+  auto joint_trajectory = tesseract_planning::toJointTrajectory(raster_plan);
+
+  outfile << "t,j1,j2,j3,j4,j5,j6" << std::endl;
+  for (const auto& joint_state : joint_trajectory)
+  {
+    outfile << joint_state.time;
+    for (Eigen::Index i=0; i < joint_state.position.size(); ++i)
+    {
+      outfile << "," << joint_state.position(i);
+    }
+    outfile << std::endl;
+  }
+}
+
 class MotionPlanner
 {
 public:
@@ -236,6 +254,12 @@ public:
         // Save text file of the composite instruction to the /tmp directory for debugging purposes
         tesseract_planning::Serialization::toArchiveFileXML(ci_res, "/tmp/tesseract_ci_output.xml");
 
+        for (const auto& instr : ci_res)
+        {
+          ROS_INFO_STREAM("Instruction: " << instr.getDescription() << ", type: " << instr.getType().name());
+        }
+        outputRasterData(ci_res.at(1).as<tesseract_planning::CompositeInstruction>()); //The single raster
+
         // Visualize results in rviz
         plotter->waitForConnection();
         if (plotter->isConnected())
@@ -252,8 +276,12 @@ public:
         return true;
     }
 
-    bool planProcessCallback(robot_motion_planning::PlanTrajectory::Request& req,
+    /*
+    bool planProcessCallback(robot_motion_planning::PlanTrajectory::Request&,
                              robot_motion_planning::PlanTrajectory::Response& res)
+                             */
+    bool planProcessCallback(std_srvs::Trigger::Request&,
+                             std_srvs::Trigger::Response& res)
     {
         // Load planner config yaml file
         std::string support_path = ros::package::getPath("rpi_abb_irb6640_180_255_support");
@@ -266,7 +294,7 @@ public:
         return true;
     }
 
-    bool simplePlanProcessCallback(std_srvs::Trigger::Request& req, std_srvs::Trigger::Response& res)
+    bool simplePlanProcessCallback(std_srvs::Trigger::Request&, std_srvs::Trigger::Response& res)
     {
         // Load simple planner config yaml file
         std::string support_path = ros::package::getPath("rpi_abb_irb6640_180_255_support");
@@ -297,7 +325,8 @@ private:
         tesseract_planning::ProfileDictionary::Ptr profiles = planning_server.getProfiles();
 
         // Simple Planner (interpolation) Profile, see the following link for details
-        // https://github.com/tesseract-robotics/tesseract_planning/blob/master/tesseract_motion_planners/core/include/tesseract_motion_planners/simple/profile/simple_planner_lvs_plan_profile.h
+        // https://github.com/tesseract-robotics/tesseract_planning/blob/master/tesseract_motion_planners/
+        // core/include/tesseract_motion_planners/simple/profile/simple_planner_lvs_plan_profile.h
         double longest_valid_state_length = getYaml<double>(simple_planner_config, "longest_valid_state_length");
         double longest_valid_translation = getYaml<double>(simple_planner_config, "longest_valid_translation");
         double longest_valid_rotation = getYaml<double>(simple_planner_config, "longest_valid_rotation");
@@ -313,7 +342,8 @@ private:
             tesseract_planning::profile_ns::SIMPLE_DEFAULT_NAMESPACE, "FREESPACE", simple_plan_profile);
 
         // Descartes Plan Profile
-        // https://github.com/tesseract-robotics/tesseract_planning/blob/master/tesseract_motion_planners/descartes/include/tesseract_motion_planners/descartes/profile/descartes_default_plan_profile.h
+        // https://github.com/tesseract-robotics/tesseract_planning/blob/master/tesseract_motion_planners/
+        // descartes/include/tesseract_motion_planners/descartes/profile/descartes_default_plan_profile.h
         auto descartes_plan_profile = std::make_shared<tesseract_planning::DescartesDefaultPlanProfile<float>>();
 
         descartes_plan_profile->allow_collision = getYaml<bool>(descartes_config, "allow_collisions");
@@ -336,7 +366,8 @@ private:
             tesseract_planning::profile_ns::DESCARTES_DEFAULT_NAMESPACE, "FREESPACE", descartes_plan_profile);
 
         // OMPL Plan Profile, see the following link for details
-        // https://github.com/tesseract-robotics/tesseract_planning/blob/master/tesseract_motion_planners/ompl/include/tesseract_motion_planners/ompl/profile/ompl_default_plan_profile.h
+        // https://github.com/tesseract-robotics/tesseract_planning/blob/master/tesseract_motion_planners/
+        // ompl/include/tesseract_motion_planners/ompl/profile/ompl_default_plan_profile.h
         auto ompl_plan_profile = std::make_shared<tesseract_planning::OMPLDefaultPlanProfile>();
         auto rrt_plan = std::make_shared<tesseract_planning::RRTConnectConfigurator>();
 
@@ -359,7 +390,8 @@ private:
                                                                   "FREESPACE", ompl_plan_profile);
 
         // Trajopt Composite Profile, see the following link for details
-        // https://github.com/tesseract-robotics/tesseract_planning/blob/master/tesseract_motion_planners/trajopt/include/tesseract_motion_planners/trajopt/profile/trajopt_default_composite_profile.h
+        // https://github.com/tesseract-robotics/tesseract_planning/blob/master/tesseract_motion_planners/
+        // trajopt/include/tesseract_motion_planners/trajopt/profile/trajopt_default_composite_profile.h
         auto trajopt_composite_profile = std::make_shared<tesseract_planning::TrajOptDefaultCompositeProfile>();
         YAML::Node trajopt_collision_config = trajopt_config["collision"];
         YAML::Node trajopt_velocity_config = trajopt_config["smooth_velocities"];
@@ -407,7 +439,8 @@ private:
             tesseract_planning::profile_ns::TRAJOPT_DEFAULT_NAMESPACE, "FREESPACE", trajopt_composite_profile);
 
         // Trajopt Plan Profile, see the following link for details
-        // https://github.com/tesseract-robotics/tesseract_planning/blob/master/tesseract_motion_planners/trajopt/include/tesseract_motion_planners/trajopt/profile/trajopt_default_plan_profile.h
+        // https://github.com/tesseract-robotics/tesseract_planning/blob/master/tesseract_motion_planners/
+        // trajopt/include/tesseract_motion_planners/trajopt/profile/trajopt_default_plan_profile.h
         auto trajopt_plan_profile = std::make_shared<tesseract_planning::TrajOptDefaultPlanProfile>();
         YAML::Node trajopt_waypoint_config = trajopt_config["waypoint"];
 
