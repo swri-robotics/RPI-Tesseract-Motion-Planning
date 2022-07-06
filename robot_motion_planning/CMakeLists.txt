@@ -89,6 +89,7 @@ target_link_libraries(planner_node
 add_dependencies(planner_node ${${PROJECT_NAME}_EXPORTED_TARGETS})
 
 install(DIRECTORY include/${PROJECT_NAME} DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
+install(DIRECTORY config launch task_data DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
 install(
   TARGETS

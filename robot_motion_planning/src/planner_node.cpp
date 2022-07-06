@@ -186,8 +186,8 @@ public:
     bool doMotionPlanning(YAML::Node config_yaml)
     {
         // Load in points.csv to a vector of Eigen::Isometry3d
-        std::string support_path = ros::package::getPath("rpi_abb_irb6640_180_255_support");
-        std::string filepath = support_path + "/config/Curve_in_base_frame.csv";
+        std::string support_path = ros::package::getPath("robot_motion_planning");
+        std::string filepath = support_path + "/task_data/Curve_in_base_frame.csv";
         YAML::Node waypoint_config = getYaml<YAML::Node>(config_yaml, "waypoints");
         int freq = getYaml<int>(waypoint_config, "downsample_frequency");
 
@@ -284,7 +284,7 @@ public:
                              std_srvs::Trigger::Response& res)
     {
         // Load planner config yaml file
-        std::string support_path = ros::package::getPath("rpi_abb_irb6640_180_255_support");
+        std::string support_path = ros::package::getPath("robot_motion_planning");
         std::string config_fp = support_path + "/config/planner_config.yaml";
         YAML::Node config_yaml = YAML::LoadFile(config_fp);
 
@@ -297,7 +297,7 @@ public:
     bool simplePlanProcessCallback(std_srvs::Trigger::Request&, std_srvs::Trigger::Response& res)
     {
         // Load simple planner config yaml file
-        std::string support_path = ros::package::getPath("rpi_abb_irb6640_180_255_support");
+        std::string support_path = ros::package::getPath("robot_motion_planning");
         std::string simple_config_fp = support_path + "/config/simple_planner_config.yaml";
         YAML::Node simple_config_yaml = YAML::LoadFile(simple_config_fp);
         YAML::Node config_yaml = generatePlanConfigFromSimplePlanConfig(simple_config_yaml);
