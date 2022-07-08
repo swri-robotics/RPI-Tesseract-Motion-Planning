@@ -1,0 +1,6 @@
+std_msgs/Header header
+geometry_msgs/Pose[] path
+---
+tesseract_msgs/Trajectory trajectory
+bool success
+string message
