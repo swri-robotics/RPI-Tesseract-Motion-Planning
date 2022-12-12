@@ -189,9 +189,7 @@ public:
 
     bool doMotionPlanning(YAML::Node config_yaml)
     {
-        // Load in points.csv to a vector of Eigen::Isometry3d
-//        std::string support_path = ros::package::getPath("robot_motion_planning");
-//        std::string filepath = support_path + "/task_data/Curve_in_base_frame.csv";
+        // Load in csv points to a vector of Eigen::Isometry3d
         YAML::Node waypoint_config = getYaml<YAML::Node>(config_yaml, "waypoints");
         int freq = getYaml<int>(waypoint_config, "downsample_frequency");
 
