@@ -4,6 +4,7 @@
     <!-- robot description parameters -->
     <param name="robot_description" command="$(find xacro)/xacro '$(find rpi_abb_irb6640_180_255_support)/urdf/workcell.xacro'" />
     <param name="robot_description_semantic" textfile="$(find rpi_abb_irb6640_180_255_support)/config/abb_irb6640_180_255.srdf" />
+    <param name="csv_filepath" type="string" value="$(find robot_motion_planning)/task_data/Curve_in_base_frame.csv" />
 
     <!-- Tesseract Monitor Parameters -->
     <arg name="discrete_plugin" default="BulletDiscreteBVHManager"/>

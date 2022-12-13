@@ -31,10 +31,14 @@ catkin build
 Source your workspace and launch the application.
 ```
 source devel/setup.bash
-roslaunch rpi_abb_irb6640_180_255_support application_setup.launch
+roslaunch robot_motion_planning application_setup.launch
 ```
+*To use a different csv file than the default, add `csv_filepath:=path/to/csv/file` to the end of the above command
+
 Open a new terminal to start the planning service.
 ```
 source devel/setup.bash
 rosservice call /plan_process "{}"
 ```
+
+Motion planning parameters can be found and edited at `robot_motion_planning/config/planner_config.yaml`.
