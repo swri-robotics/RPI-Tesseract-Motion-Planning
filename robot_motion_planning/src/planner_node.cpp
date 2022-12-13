@@ -44,6 +44,7 @@ static const std::string MONITOR_NAMESPACE = "environment_monitor";
 static const std::string MONITOR_ENVIRONMENT_NAMESPACE = "robot_environment";
 static const std::string PLAN_PROCESS_SRV_NAME = "plan_process";
 static const std::string SIMPLE_PLAN_PROCESS_SRV_NAME = "simple_plan_process";
+static const std::string CSV_FILEPATH = "csv_filepath";
 
 namespace robot_motion_planning
 {
@@ -175,6 +176,9 @@ public:
         nh_.getParam(ROBOT_DESCRIPTION_PARAM, urdf_xml_string);
         nh_.getParam(ROBOT_SEMANTIC_PARAM, srdf_xml_string);
 
+        // load csv
+        nh_.getParam(CSV_FILEPATH, csv_file);
+
         // Initialize tesseract environment
         tesseract_common::ResourceLocator::Ptr locator = std::make_shared<tesseract_rosutils::ROSResourceLocator>();
         if (!env_->init(urdf_xml_string, srdf_xml_string, locator))
@@ -185,13 +189,11 @@ public:
 
     bool doMotionPlanning(YAML::Node config_yaml)
     {
-        // Load in points.csv to a vector of Eigen::Isometry3d
-        std::string support_path = ros::package::getPath("robot_motion_planning");
-        std::string filepath = support_path + "/task_data/Curve_in_base_frame.csv";
+        // Load in csv points to a vector of Eigen::Isometry3d
         YAML::Node waypoint_config = getYaml<YAML::Node>(config_yaml, "waypoints");
         int freq = getYaml<int>(waypoint_config, "downsample_frequency");
 
-        std::vector<Eigen::Isometry3d> toolpath = loadPoints(filepath, freq);
+        std::vector<Eigen::Isometry3d> toolpath = loadPoints(csv_file, freq);
         ROS_INFO_STREAM("Loaded " << toolpath.size() << " points");
 
         // Create a tesseract composite instruction from the vector of waypoints
@@ -468,6 +470,9 @@ private:
     // Tesseract required components for keeping up with and publishing the environment state
     tesseract_environment::Environment::Ptr env_;
     tesseract_monitoring::EnvironmentMonitor::Ptr monitor_;
+
+    // csv file
+    std::string csv_file;
 };
 }  // namespace robot_motion_planning
 
