@@ -97,7 +97,7 @@ tesseract_planning::CompositeInstruction createProgram(const std::vector<Eigen::
 
     // Create first freespace ci to first waypoint then add this to the overall ci
     // Define first waypoint by getting the first value from the toolpath
-    tesseract_planning::CartesianWaypoint wp1 = toolpath.front() * wp_transform;
+    tesseract_planning::CartesianWaypoint wp1 = wp_transform * toolpath.front();
     // Make a plan instruction of freespace type to this waypoint
     tesseract_planning::PlanInstruction plan_f0(wp1, tesseract_planning::PlanInstructionType::FREESPACE,
                                                 freespace_plan_profile);
@@ -117,7 +117,7 @@ tesseract_planning::CompositeInstruction createProgram(const std::vector<Eigen::
     // first point already
     for (std::size_t i = 1; i < toolpath.size(); ++i)
     {
-        tesseract_planning::CartesianWaypoint wp = toolpath[i] * wp_transform;  // Apply transform to each waypoint
+        tesseract_planning::CartesianWaypoint wp = wp_transform * toolpath[i];  // Apply transform to each waypoint
         raster_seg.push_back(
             tesseract_planning::PlanInstruction(wp, tesseract_planning::PlanInstructionType::LINEAR, raster_plan_profile));
     }
