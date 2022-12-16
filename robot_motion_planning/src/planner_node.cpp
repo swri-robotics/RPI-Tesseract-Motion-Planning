@@ -73,11 +73,13 @@ tesseract_planning::CompositeInstruction createProgram(const std::vector<Eigen::
     double x_rotation = getYaml<double>(rotation_yaml, 0);
     double y_rotation = getYaml<double>(rotation_yaml, 1);
     double z_rotation = getYaml<double>(rotation_yaml, 2);
-    Eigen::Isometry3d wp_transform =
-        Eigen::Isometry3d::Identity() * Eigen::Translation3d(x_translation, y_translation, z_translation);
+    Eigen::Isometry3d wp_transform = Eigen::Isometry3d::Identity();
     wp_transform *= Eigen::AngleAxisd(x_rotation, Eigen::Vector3d::UnitX());
     wp_transform *= Eigen::AngleAxisd(y_rotation, Eigen::Vector3d::UnitY());
     wp_transform *= Eigen::AngleAxisd(z_rotation, Eigen::Vector3d::UnitZ());
+    wp_transform.translation().x() = x_translation;
+    wp_transform.translation().y() = y_translation;
+    wp_transform.translation().z() = z_translation;
 
     // Create manipulator given manipulator group, tf frame of the waypoints, tcp frame
     tesseract_planning::ManipulatorInfo manip_info("manipulator", "world", "paint_gun");
@@ -137,11 +139,15 @@ tesseract_planning::CompositeInstruction createProgram(const std::vector<Eigen::
     return ci;
 }
 
-void outputRasterData(const tesseract_planning::CompositeInstruction& raster_plan)
+void outputRasterData(const tesseract_planning::CompositeInstruction& ci,
+                      const tesseract_scene_graph::StateSolver &state_solver,
+                      const std::string tcp_frame = "paint_gun")
 {
-  std::ofstream outfile("/tmp/movej_waypoints.csv");
-  auto joint_trajectory = tesseract_planning::toJointTrajectory(raster_plan);
+  // save joint states to a csv file
+  std::ofstream outfile;
+  outfile.open("/home/tcappellari/ros/rpi_ws/src/robot_motion_opt_tesseract/robot_motion_planning/task_data/tesseract_output/movej_waypoints.csv");
 
+  auto joint_trajectory = tesseract_planning::toJointTrajectory(ci);
   outfile << "t,j1,j2,j3,j4,j5,j6" << std::endl;
   for (const auto& joint_state : joint_trajectory)
   {
@@ -152,6 +158,32 @@ void outputRasterData(const tesseract_planning::CompositeInstruction& raster_pla
     }
     outfile << std::endl;
   }
+  outfile.close();
+
+  // save end effector positions to a csv file
+  std::ofstream e_outfile;
+  e_outfile.open("/home/tcappellari/ros/rpi_ws/src/robot_motion_opt_tesseract/robot_motion_planning/task_data/tesseract_output/end_waypoints.csv");
+  e_outfile << "trans_x,trans_y,trans_z,rot_x,rot_y,rot_z," << std::endl;
+
+  auto mv = tesseract_planning::flatten(ci, tesseract_planning::moveFilter);
+
+  for (std::size_t i = 0; i < mv.size(); i++)
+  {
+      auto curr_wp = mv[i].get().as<tesseract_planning::MoveInstruction>().getWaypoint().as<tesseract_planning::StateWaypoint>();
+      tesseract_scene_graph::SceneState ss_curr = state_solver.getState(curr_wp.joint_names, curr_wp.position);
+      Eigen::Isometry3d curr_pose = ss_curr.link_transforms[tcp_frame];
+
+      e_outfile << curr_pose.translation().x() << ",";
+      e_outfile << curr_pose.translation().y() << ",";
+      e_outfile << curr_pose.translation().z() << ",";
+      auto rot = curr_pose.rotation().eulerAngles(0, 1, 2);
+      e_outfile << rot.x() << ",";
+      e_outfile << rot.y() << ",";
+      e_outfile << rot.z() << ",";
+      e_outfile << std::endl;
+  }
+
+  e_outfile.close();
 }
 
 class MotionPlanner
@@ -260,7 +292,8 @@ public:
         {
           ROS_INFO_STREAM("Instruction: " << instr.getDescription() << ", type: " << instr.getType().name());
         }
-        outputRasterData(ci_res.at(1).as<tesseract_planning::CompositeInstruction>()); //The single raster
+        auto state_solver = (*env_).getStateSolver();;
+        outputRasterData(ci_res.at(1).as<tesseract_planning::CompositeInstruction>(), *state_solver); //The single raster
 
         // Visualize results in rviz
         plotter->waitForConnection();
@@ -274,14 +307,9 @@ public:
             plotter->plotMarker(tesseract_visualization::ToolpathMarker(toolpath));
             plotter->plotTrajectory(trajectory, *env_->getStateSolver());
         }
-
         return true;
     }
 
-    /*
-    bool planProcessCallback(robot_motion_planning::PlanTrajectory::Request&,
-                             robot_motion_planning::PlanTrajectory::Response& res)
-                             */
     bool planProcessCallback(std_srvs::Trigger::Request&,
                              std_srvs::Trigger::Response& res)
     {

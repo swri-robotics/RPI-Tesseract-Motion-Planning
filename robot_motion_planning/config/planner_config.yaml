@@ -1,7 +1,7 @@
 waypoints:
-  downsample_frequency: 1500
-  translation: [-0.4, 0.0, 0.6]
-  rotation: [0.0, 3.14, 0.0]
+  downsample_frequency: 1000
+  translation: [1.0, 0.0, 0.0]
+  rotation: [0.0, 0.0, 0.0]
   starting_joint_state: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
   ending_joint_state: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 simple_planner:
