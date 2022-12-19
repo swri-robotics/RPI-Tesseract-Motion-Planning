@@ -12,8 +12,7 @@ std::vector<Eigen::Isometry3d> robot_motion_planning::loadPoints(const std::stri
     std::string separator = ",";
     int rowIdx = 0;
 
-    // Iterate over each line creating an Eigen::Isometry3d, assume each waypoint has no rotation relative to the part
-    // frame
+    // Iterate over each line creating an Eigen::Isometry3d
     while (std::getline(file_, line))
     {
         Eigen::Isometry3d point = Eigen::Isometry3d::Identity();
