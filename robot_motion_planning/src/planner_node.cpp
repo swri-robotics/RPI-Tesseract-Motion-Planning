@@ -80,6 +80,7 @@ tesseract_planning::CompositeInstruction createProgram(const std::vector<Eigen::
     wp_transform.translation().x() = x_translation;
     wp_transform.translation().y() = y_translation;
     wp_transform.translation().z() = z_translation;
+//    wp_transform.linear().matrix() *= Eigen::AngleAxisd(3.14, Eigen::Vector3d::UnitX()).matrix();
 
     // Create manipulator given manipulator group, tf frame of the waypoints, tcp frame
     tesseract_planning::ManipulatorInfo manip_info("manipulator", "world", "paint_gun");
@@ -98,6 +99,7 @@ tesseract_planning::CompositeInstruction createProgram(const std::vector<Eigen::
     // Create first freespace ci to first waypoint then add this to the overall ci
     // Define first waypoint by getting the first value from the toolpath
     tesseract_planning::CartesianWaypoint wp1 = wp_transform * toolpath.front();
+    wp1.linear().matrix() *= Eigen::AngleAxisd(3.14, Eigen::Vector3d::UnitX()).matrix();
     // Make a plan instruction of freespace type to this waypoint
     tesseract_planning::PlanInstruction plan_f0(wp1, tesseract_planning::PlanInstructionType::FREESPACE,
                                                 freespace_plan_profile);
@@ -118,6 +120,7 @@ tesseract_planning::CompositeInstruction createProgram(const std::vector<Eigen::
     for (std::size_t i = 1; i < toolpath.size(); ++i)
     {
         tesseract_planning::CartesianWaypoint wp = wp_transform * toolpath[i];  // Apply transform to each waypoint
+        wp.linear().matrix() *= Eigen::AngleAxisd(3.14, Eigen::Vector3d::UnitX()).matrix();
         raster_seg.push_back(
             tesseract_planning::PlanInstruction(wp, tesseract_planning::PlanInstructionType::LINEAR, raster_plan_profile));
     }
@@ -146,24 +149,25 @@ void outputRasterData(const tesseract_planning::CompositeInstruction& ci,
   // save joint states to a csv file
   std::ofstream outfile;
   outfile.open("/home/tcappellari/ros/rpi_ws/src/robot_motion_opt_tesseract/robot_motion_planning/task_data/tesseract_output/movej_waypoints.csv");
+  std::ofstream e_outfile;
+  e_outfile.open("/home/tcappellari/ros/rpi_ws/src/robot_motion_opt_tesseract/robot_motion_planning/task_data/tesseract_output/end_waypoints.csv");
+  e_outfile << "t,trans_x,trans_y,trans_z,rot_x,rot_y,rot_z," << std::endl;
+  outfile << "t,j1,j2,j3,j4,j5,j6" << std::endl;
 
   auto joint_trajectory = tesseract_planning::toJointTrajectory(ci);
-  outfile << "t,j1,j2,j3,j4,j5,j6" << std::endl;
   for (const auto& joint_state : joint_trajectory)
   {
     outfile << joint_state.time;
     for (Eigen::Index i=0; i < joint_state.position.size(); ++i)
     {
       outfile << "," << joint_state.position(i);
+
     }
     outfile << std::endl;
   }
   outfile.close();
 
   // save end effector positions to a csv file
-  std::ofstream e_outfile;
-  e_outfile.open("/home/tcappellari/ros/rpi_ws/src/robot_motion_opt_tesseract/robot_motion_planning/task_data/tesseract_output/end_waypoints.csv");
-  e_outfile << "trans_x,trans_y,trans_z,rot_x,rot_y,rot_z," << std::endl;
 
   auto mv = tesseract_planning::flatten(ci, tesseract_planning::moveFilter);
 
@@ -173,6 +177,7 @@ void outputRasterData(const tesseract_planning::CompositeInstruction& ci,
       tesseract_scene_graph::SceneState ss_curr = state_solver.getState(curr_wp.joint_names, curr_wp.position);
       Eigen::Isometry3d curr_pose = ss_curr.link_transforms[tcp_frame];
 
+      e_outfile << curr_wp.time << ",";
       e_outfile << curr_pose.translation().x() << ",";
       e_outfile << curr_pose.translation().y() << ",";
       e_outfile << curr_pose.translation().z() << ",";
